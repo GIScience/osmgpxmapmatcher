@@ -1,5 +1,9 @@
 package osmgpxtool.mapmatching;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -29,11 +33,11 @@ public class Main {
 	private static CommandLine cmd = null;
 	static Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
-
 	public static void main(String[] args) {
 		Properties props = new Properties();
 		try {
-			props.load(Main.class.getResourceAsStream("/matching.properties"));
+			//props.load(new FileInputStream("/matching-properties"));
+			 props.load(Main.class.getResourceAsStream("/matching.properties"));
 		} catch (IOException e) {
 			LOGGER.error("could not read Properties file");
 			System.exit(-1);
@@ -110,7 +114,7 @@ public class Main {
 		}
 		if (cmd.getOptionValue("o") != null) {
 			props.setProperty("dbOutputTable", cmd.getOptionValue("o"));
-		} 
+		}
 	}
 
 	private static void setupArgumentOptions() {
@@ -130,7 +134,6 @@ public class Main {
 		// output
 		cmdOptions.addOption(OptionBuilder.withDescription("Name of output table in database. <default:streets_gpx>")
 				.hasArg().create("o"));
-
 
 	}
 }
