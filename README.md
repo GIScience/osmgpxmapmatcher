@@ -20,7 +20,7 @@ To adjust the standard schema of the input tables, the properties file matching.
 1. install maven
 2. install git
 3. clone project `$ git clone https://github.com/GIScience/osmgpxfilter`
-4. go into project directory `$ cd osmgpxfilter/`
+4. go into project directory `$ cd osmgpxfilter/h
 5. run maven `$ mvn clean package`
 6. start application `java -jar target/osmgpxfilter-0.1.jar <args>`
 
