@@ -1,7 +1,9 @@
 package osmgpxtool.mapmatching;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Properties;
 
 import org.apache.commons.cli.BasicParser;
@@ -15,6 +17,8 @@ import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import osmgpxtool.mapmatching.writer.PGSqlWriter;
+
 public class Main {
 	/*
 	 * INPUT: database, host, port, user, pw, streettable, street_id_column,
@@ -24,13 +28,6 @@ public class Main {
 	private static Options cmdOptions;
 	private static CommandLine cmd = null;
 	static Logger LOGGER = LoggerFactory.getLogger(Main.class);
-
-	private static String dbUser;
-	private static String dbPassword;
-	private static String dbName;
-	private static String dbHost = "localhost";
-	private static String dbPort = "5432";
-
 
 
 	public static void main(String[] args) {
@@ -42,19 +39,40 @@ public class Main {
 			System.exit(-1);
 		}
 		parseArguments(args, props);
+		Connection dbConnection = getDbConnection(props);
 
-		//init writer
-		
-		
-		
-		//init MapMatcher
-		
-		//MapMatcher.run
-		
-		
-		
-		
+		// init writer
+		PGSqlWriter writer = new PGSqlWriter(dbConnection, props);
+
+		// init writer
+		writer.init();
+		// init MapMatcher
+		MapMatcher matcher = new MapMatcher(dbConnection, props, writer);
+		matcher.init();
+		matcher.run();
+
+		writer.close();
+
 		LOGGER.info("done");
+	}
+
+	/**
+	 * establish database connection
+	 */
+	private static Connection getDbConnection(Properties props) {
+		Connection dbConnection = null;
+		String url = "jdbc:postgresql://" + props.getProperty("dbHost") + "/" + props.getProperty("dbName");
+
+		try {
+			dbConnection = DriverManager.getConnection(url, props.getProperty("dbUser"),
+					props.getProperty("dbPassword"));
+			dbConnection.setAutoCommit(true);
+		} catch (SQLException ex) {
+			LOGGER.error("Could not connect to database");
+			ex.printStackTrace();
+			System.exit(1);
+		}
+		return dbConnection;
 	}
 
 	private static void parseArguments(String[] args, Properties props) {
@@ -90,42 +108,29 @@ public class Main {
 		if (cmd.getOptionValue("P") != null) {
 			props.setProperty("dbPort", cmd.getOptionValue("P"));
 		}
-		if (cmd.getOptionValue("wpg") != null) {
-			props.setProperty("dbOutputTable", cmd.getOptionValue("wpg"));
-		}else if (cmd.getOptionValue("wcsv") != null) {
-			props.put("dbOutputTable", cmd.getOptionValue("wcsv"));
-		}else{
-			LOGGER.info("No output parameter given. output table will be writen to database.");
-		}
+		if (cmd.getOptionValue("o") != null) {
+			props.setProperty("dbOutputTable", cmd.getOptionValue("o"));
+		} 
 	}
 
 	private static void setupArgumentOptions() {
 		// parse command line arguments
 		cmdOptions.addOption(new Option("h", "help", false, "displays help"));
 		// database properties
-		cmdOptions.addOption(OptionBuilder.isRequired().withLongOpt("database")
-				.withDescription("Name of database").hasArg().create("D"));
-		cmdOptions.addOption(OptionBuilder.isRequired().withLongOpt("user")
-				.withDescription("Name of DB-Username").hasArg().create("U"));
-		cmdOptions.addOption(OptionBuilder.isRequired().withLongOpt("password")
-				.withDescription("Password of DB-User").hasArg().create("PW"));
-		cmdOptions.addOption(OptionBuilder.withLongOpt("host")
-				.withDescription("Database host <default:localhost>").hasArg()
-				.create("H"));
-		cmdOptions.addOption(OptionBuilder.withLongOpt("port")
-				.withDescription("Database port <default:5432>").hasArg()
+		cmdOptions.addOption(OptionBuilder.isRequired().withLongOpt("database").withDescription("Name of database")
+				.hasArg().create("D"));
+		cmdOptions.addOption(OptionBuilder.isRequired().withLongOpt("user").withDescription("Name of DB-Username")
+				.hasArg().create("U"));
+		cmdOptions.addOption(OptionBuilder.isRequired().withLongOpt("password").withDescription("Password of DB-User")
+				.hasArg().create("PW"));
+		cmdOptions.addOption(OptionBuilder.withLongOpt("host").withDescription("Database host <default:localhost>")
+				.hasArg().create("H"));
+		cmdOptions.addOption(OptionBuilder.withLongOpt("port").withDescription("Database port <default:5432>").hasArg()
 				.create("P"));
 		// output
-		cmdOptions
-				.addOption(OptionBuilder
-						.withDescription(
-								"Name of output table in database. <default:street_gpx>")
-						.hasArg().create("wpg"));
-		cmdOptions
-				.addOption(OptionBuilder
-						.withDescription(
-								"Write result to given csv file. provide path and filename")
-						.hasArg().create("wcsv"));
+		cmdOptions.addOption(OptionBuilder.withDescription("Name of output table in database. <default:streets_gpx>")
+				.hasArg().create("o"));
+
 
 	}
 }
