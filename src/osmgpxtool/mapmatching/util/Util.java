@@ -220,6 +220,7 @@ public class Util {
 					Coordinate[] profileNodes = new Coordinate[2];
 					// calculate start node of new profile line
 					calc.setStartingGeographicPoint(node.x, node.y);
+				
 					// ifdirection <-180 oder > +180 add / substract 360°
 					double newDirection = direction + 90;
 					if (newDirection > 180) {
@@ -227,8 +228,8 @@ public class Util {
 					} else {
 						calc.setDirection(newDirection, length / 2);
 					}
-					profileNodes[0] = new Coordinate(calc.getDestinationPosition().getCoordinate()[0], calc
-							.getDestinationPosition().getCoordinate()[1]);
+					profileNodes[0] = new Coordinate(calc.getDestinationPosition().getCoordinate()[1], calc
+							.getDestinationPosition().getCoordinate()[0]);
 					// calculate end node of new profile line
 					// if direction <-180 oder > +180 add / substract 360°
 					newDirection = direction - 90;
@@ -237,8 +238,8 @@ public class Util {
 					} else {
 						calc.setDirection(newDirection, length / 2);
 					}
-					profileNodes[1] = new Coordinate(calc.getDestinationPosition().getCoordinate()[0], calc
-							.getDestinationPosition().getCoordinate()[1]);
+					profileNodes[1] = new Coordinate(calc.getDestinationPosition().getCoordinate()[1], calc
+							.getDestinationPosition().getCoordinate()[0]);
 					GeometryFactory geomF = new GeometryFactory();
 					profiles.add(geomF.createLineString(profileNodes));
 				}

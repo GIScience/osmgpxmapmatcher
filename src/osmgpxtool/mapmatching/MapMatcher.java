@@ -111,7 +111,7 @@ public class MapMatcher {
 					if (profile.intersects(trace.getGeom())) {
 						numberIntersects++;
 						if (numberIntersects / numberProfiles >= Double.valueOf(p
-								.getProperty("streetProfileIntersectionRation"))) {
+								.getProperty("streetProfileIntersectionRatio"))) {
 							// more or equal than 70 % of profile line are
 							// intersected, consider GPS as matched
 							break;
@@ -120,7 +120,7 @@ public class MapMatcher {
 				}
 
 				if (numberIntersects / numberProfiles >= Double.valueOf(p
-						.getProperty("streetProfileIntersectionRation"))) {
+						.getProperty("streetProfileIntersectionRatio"))) {
 					writer.write(street, trace);
 				}
 

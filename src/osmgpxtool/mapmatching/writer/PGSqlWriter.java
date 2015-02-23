@@ -12,13 +12,16 @@ import java.util.Properties;
 import osmgpxtool.mapmatching.StreetSegment;
 import osmgpxtool.mapmatching.gps.GpsTrace;
 
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.io.WKBWriter;
 
 /**
  * Database writer for MapMatching results.
  *
  */
-public class PGSqlWriter{
+public class PGSqlWriter {
 
 	private Connection con;
 	private Properties p;
@@ -34,7 +37,6 @@ public class PGSqlWriter{
 		this.p = props;
 	}
 
-
 	public void init() {
 		inserts = null;
 
@@ -48,9 +50,8 @@ public class PGSqlWriter{
 			// for creation of databases
 			create = con.createStatement();
 			create.addBatch("DROP TABLE IF EXISTS " + p.getProperty("dbOutputTable") + ";");
-			create.addBatch("CREATE TABLE "
-					+ p.getProperty("dbOutputTable")
-					+ " (\"street_id\" integer NOT NULL, \"gpx_id\" integer NOT NULL, \"d_heading\" double precision, \"hd_distance\" double precision, CONSTRAINT \""
+			create.addBatch("CREATE TABLE " + p.getProperty("dbOutputTable")
+					+ " (\"street_id\" integer NOT NULL, \"gpx_id\" integer NOT NULL, CONSTRAINT \""
 					+ p.getProperty("dbOutputTable") + "_PK\" PRIMARY KEY (street_id, gpx_id));");
 
 			// TODO: uncomment if you want to write the profile line to database
@@ -85,7 +86,6 @@ public class PGSqlWriter{
 		wkbWriter = new WKBWriter(3, true);
 	}
 
-
 	public void write(StreetSegment street, GpsTrace trace) {
 
 		try {
@@ -104,7 +104,6 @@ public class PGSqlWriter{
 			 * 
 			 * lastStreetWritten = street.getId();
 			 */
-
 			if (batchSize == 10000) {
 				batchSize = 0;
 				insert.executeBatch();
@@ -120,7 +119,6 @@ public class PGSqlWriter{
 			System.exit(1);
 		}
 	}
-
 
 	public void close() {
 
