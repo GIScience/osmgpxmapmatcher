@@ -1,5 +1,5 @@
 # osmgpxmapmatcher
-osmgpxmapmatcher is a tool to find corresponding GPS traces of street segments. The streets and GPS traces to be matched, need to be stored in a PostgreSQL/PostGIS database. 
+osmgpxmapmatcher is a tool to find corresponding GPS traces of street segments. The streets and GPS traces to be matched, need to be stored in a PostgreSQL/PostGIS database. [osmgpxfilter](https://github.com/GIScience/osmgpxfilter) can be used to import the GPS-traces into the database.
 The result will be written in a new table, referencing the streets and GPS traces. 
 To adjust the standard schema of the input tables, the properties file matching.properties needs to be changed. 
 
@@ -26,17 +26,22 @@ To adjust the standard schema of the input tables, the properties file matching.
 
 ### Usage
 ```
- -D,--database          Name of database
+Help:
  -h,--help              displays help
- -H,--host <arg>        Database host <default:localhost>
- -o <arg>               Name of output table in database. <default:streets_gpx>
- -P,--port <arg>        Database port <default:5432>
+ 
+Required Arguments:
+ -D,--database          Name of database
  -PW,--password <arg>   Password of DB-User
  -U,--user <arg>        Name of DB-Username
+ 
+ Optional Arguments:
+-H,--host <arg>        Database host <default:localhost>
+ -o <arg>               Name of output table in database. <default:streets_gpx>
+ -P,--port <arg>        Database port <default:5432>
 
 
+Example:
 
-Example
 
  ```
  
