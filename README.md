@@ -1,16 +1,16 @@
 # osmgpxmapmatcher
 osmgpxmapmatcher is a tool to find corresponding GPS traces of street segments. The streets and GPS traces to be matched, need to be stored in a PostgreSQL/PostGIS database. [osmgpxfilter](https://github.com/GIScience/osmgpxfilter) can be used to import the GPS-traces into the database.
-The result will be written in a new table, referencing the streets and GPS traces. 
+The result will be written in a new table, referencing the unique identifiers of streets and GPS trace data sets. 
 To adjust the standard schema of the input tables, the properties file matching.properties needs to be changed. 
 
- Until now it uses following simple matching algorithm:
+ Until now, it uses following matching algorithm:
 
 - look for candidate traces intersecting a buffer of a street segment
 - create profile lines (perpendicular line) with a given length add each node of a street 
 - condition: if 70% of the profile lines are intersected by the GPS Trace, the street and GPS trace are considered as matched:
 
 ### Requirements
-- The input data must be in CRS WGS84 (EPSG:4326)
+- The input geometries must be in WGS84 (EPSG:4326)
 - Geometry type of GPS-traces: MultiLineString
 - Geometry type of streets: LineString
 
@@ -19,10 +19,11 @@ To adjust the standard schema of the input tables, the properties file matching.
 
 1. install maven
 2. install git
-3. clone project `$ git clone https://github.com/GIScience/osmgpxfilter`
-4. go into project directory `$ cd osmgpxfilter/h
+3. clone project `$ git clone https://github.com/GIScience/osmgpxmapmatcher`
+4. go into project directory `$ cd osmgpxmapmatcher`
+5. if necessary, adjust the properties file in resources/matching.properties
 5. run maven `$ mvn clean package`
-6. start application `java -jar target/osmgpxfilter-0.1.jar <args>`
+6. start application `java -jar target/osmgpxmapmatcher-0.1.jar <args>`
 
 ### Usage
 ```
@@ -40,7 +41,7 @@ Required Arguments:
  -P,--port <arg>        Database port <default:5432>
 
 
-Example:
+Example: java -jar target\osmgpxmapmatcher-0.1.jar -D osmgpx -U postgres -PW xxx
 
 
  ```

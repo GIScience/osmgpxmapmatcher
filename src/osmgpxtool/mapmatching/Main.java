@@ -1,14 +1,13 @@
 package osmgpxtool.mapmatching;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
+
+import osmgpxtool.mapmatching.MapMatcher;
+import osmgpxtool.mapmatching.writer.PGSqlWriter;
 
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
@@ -21,7 +20,6 @@ import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import osmgpxtool.mapmatching.writer.PGSqlWriter;
 
 public class Main {
 	/*
@@ -33,7 +31,7 @@ public class Main {
 	private static CommandLine cmd = null;
 	static Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws ClassNotFoundException {
 		Properties props = new Properties();
 		try {
 			//props.load(new FileInputStream("/matching-properties"));
@@ -62,12 +60,15 @@ public class Main {
 
 	/**
 	 * establish database connection
+	 * @throws ClassNotFoundException 
 	 */
-	private static Connection getDbConnection(Properties props) {
+	private static Connection getDbConnection(Properties props) throws ClassNotFoundException {
+		//load driver
+		Class.forName("org.postgresql.Driver");
 		Connection dbConnection = null;
 		String url = "jdbc:postgresql://" + props.getProperty("dbHost") + "/" + props.getProperty("dbName");
-
 		try {
+			
 			dbConnection = DriverManager.getConnection(url, props.getProperty("dbUser"),
 					props.getProperty("dbPassword"));
 			dbConnection.setAutoCommit(true);

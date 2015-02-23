@@ -11,12 +11,13 @@
 	<url>http://maven.apache.org</url>
 
 	<build>
-<sourceDirectory>src</sourceDirectory>
+		<sourceDirectory>src</sourceDirectory>
+		<resources>
+     <resource>
+       <directory>resources</directory>
+     </resource>
+   </resources>
 		<plugins>
-
-			
-
-
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
@@ -28,6 +29,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
+		
 				<configuration>
 					<archive>
 						<manifest>
@@ -50,7 +52,6 @@
 				</executions>
 			</plugin>
 		</plugins>
-		
 	</build>
 
 	<properties>
@@ -95,15 +96,10 @@
 			<artifactId>gt-epsg-hsql</artifactId>
 			<version>12.2</version>
 		</dependency>
-
-
 		<dependency>
 			<groupId>postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<version>9.1-901.jdbc4</version>
 		</dependency>
-
-
-
 	</dependencies>
 </project>
