@@ -11,7 +11,6 @@
 	<url>http://maven.apache.org</url>
 
 	<build>
-	<sourceDirectory>src</sourceDirectory>
 		<plugins>
 	<plugin>
     <groupId>org.codehaus.mojo</groupId>
