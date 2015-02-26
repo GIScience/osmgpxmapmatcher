@@ -144,14 +144,14 @@ public class MapMatcher {
 		try {
 			s = con.createStatement();
 
-			rs = s.executeQuery("SELECT " + p.getProperty("t_streetIdCol") + "," + p.getProperty("t_streetIdCol") + ","
+			rs = s.executeQuery("SELECT " + p.getProperty("t_streetIdCol") + "," + p.getProperty("t_streetOsmIdCol") + ","
 					+ p.getProperty("t_streetTags") + ",ST_ASBINARY(" + p.getProperty("t_streetGeomCol") + ") as "
 					+ p.getProperty("t_streetGeomCol") + " FROM " + p.getProperty("t_streetName") + ";");
 
 			while (rs.next()) {
 
 				int id = rs.getInt(p.getProperty("t_streetIdCol"));
-				BigInteger osm_id = new BigInteger(rs.getBigDecimal(p.getProperty("t_streetIdCol")).toString());
+				BigInteger osm_id = new BigInteger(rs.getBigDecimal(p.getProperty("t_streetOsmIdCol")).toString());
 				Map<String, String> tags = Util.hstoreToMap(rs.getObject(p.getProperty("t_streetTags")));
 				LineString line = null;
 				try {
