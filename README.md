@@ -46,6 +46,13 @@ Example: java -jar target\osmgpxmapmatcher-0.1.jar -D osmgpx -U postgres -PW xxx
 
  ```
  
+ ### Citation
+
+When using this software for scientific purposes, please cite:
+
+John, S., Hahmann, S., Zipf, A., Bakillah, M., Mobasheri, A., Rousell, A. (2015): [Towards deriving incline values for street networks from voluntarily collected GPS data] (http://koenigstuhl.geog.uni-heidelberg.de/publications/2015/Hahmann/GI_Forum_GPS.pdf). Poster session, GI Forum. Salzburg, Austria. 
+
+ 
  ```
  /*|----------------------------------------------------------------------------------------------
  *|														Heidelberg University
