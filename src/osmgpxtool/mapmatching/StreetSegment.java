@@ -1,19 +1,9 @@
 package osmgpxtool.mapmatching;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.geotools.data.shapefile.shp.JTSUtilities;
-import org.geotools.geometry.jts.JTS;
-import org.geotools.referencing.GeodeticCalculator;
-import org.opengis.referencing.operation.TransformException;
-
-import osmgpxtool.mapmatching.util.Util;
-
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 
 public class StreetSegment {

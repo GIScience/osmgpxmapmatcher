@@ -17,6 +17,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vividsolutions.jts.densify.Densifier;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
@@ -197,15 +198,16 @@ public class Util {
 			} catch (FactoryException e1) {
 				e1.printStackTrace();
 			}
-			// get nodes of street segment
-			Coordinate[] nodes = geom.getCoordinates();
+			// get nodes of street segment, densify street segment
+			
+			Coordinate[] nodes = Densifier.densify(geom, 0.00069444425).getCoordinates();
 			List<LineString> profiles = new ArrayList<LineString>();
 
 			/*
 			 * for each node, create a perpendicular line crossing the node and
 			 * being perpendicular to the line between node N and node N+1
 			 */
-
+			
 			try {
 				for (int i = 0; i < nodes.length; i++) {
 					Coordinate node = nodes[i];
@@ -240,6 +242,7 @@ public class Util {
 					}
 					profileNodes[1] = new Coordinate(calc.getDestinationPosition().getCoordinate()[1], calc
 							.getDestinationPosition().getCoordinate()[0]);
+					
 					GeometryFactory geomF = new GeometryFactory();
 					profiles.add(geomF.createLineString(profileNodes));
 				}

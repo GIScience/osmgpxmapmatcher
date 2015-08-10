@@ -6,9 +6,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-import osmgpxtool.mapmatching.MapMatcher;
-import osmgpxtool.mapmatching.writer.PGSqlWriter;
-
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -19,6 +16,8 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import osmgpxtool.mapmatching.writer.PGSqlWriter;
 
 
 public class Main {
@@ -118,6 +117,7 @@ public class Main {
 		}
 	}
 
+	@SuppressWarnings("static-access")
 	private static void setupArgumentOptions() {
 		// parse command line arguments
 		cmdOptions.addOption(new Option("h", "help", false, "displays help"));

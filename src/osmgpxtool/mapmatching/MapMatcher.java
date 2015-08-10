@@ -11,39 +11,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.geotools.geometry.jts.WKTReader2;
-import org.geotools.referencing.CRS;
-import org.geotools.referencing.GeodeticCalculator;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import osmgpxtool.mapmatching.gps.GpsTrace;
+import osmgpxtool.mapmatching.util.Progress;
 import osmgpxtool.mapmatching.util.Util;
 import osmgpxtool.mapmatching.writer.PGSqlWriter;
-import osmgpxtool.mapmatching.util.Progress;
 
-import com.vividsolutions.jts.algorithm.distance.DiscreteHausdorffDistance;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.geom.PrecisionModel;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKBReader;
 import com.vividsolutions.jts.io.WKBWriter;
-import com.vividsolutions.jts.io.WKTReader;
 
 public class MapMatcher {
 	static Logger LOGGER = LoggerFactory.getLogger(MapMatcher.class);
 	private Properties p;
 	private Connection con;
 	private PGSqlWriter writer;
-	private GeometryFactory geomF;
 	private WKBReader wkbReader;
 	private WKBWriter wkbWriter;
 
@@ -62,9 +49,7 @@ public class MapMatcher {
 		// 1. check if table, rows and so on of input data exists.
 		checkInputdata();
 
-		// 2. init geometryfactory
-		geomF = new GeometryFactory(new PrecisionModel(), 4326);
-		// 3. init WKBReader and WKBWriter
+		// 2. init WKBReader and WKBWriter
 		wkbReader = new WKBReader();
 		wkbWriter = new WKBWriter(2, true);
 
@@ -188,35 +173,28 @@ public class MapMatcher {
 		List<GpsTrace> traces = new ArrayList<GpsTrace>();
 
 		try {
-			/*
-			 * ST_FORCE2D added, since wkbReader does not support parsing of
-			 * MultiLineString Z geometries. Work around could be to fetch first
-			 * all gpx_id. Then loop through gpx_id and fetch the single points
-			 * per trace using ST_DUMPOINTS (as well as ST_X, ST_Y, ST_Z) and
-			 * construct a new Multilinestrin out of it. EXAMPLE: SELECT gpx_id,
-			 * ST_ASTEXT((st_dumppoints(geom)).geom),(st_dumppoints(geom)).path
-			 * as points from gpx_data_line WHERE gpx_id=xxx ORDER BY
-			 * (st_dumppoints(geom)).path[1], (st_dumppoints(geom)).path[2];
-			 */
 
-			s = con.prepareStatement("SELECT " + p.getProperty("t_gpxIdCol") + ", ST_ASBINARY(ST_Force2D("
-					+ p.getProperty("t_gpxGeomCol") + ")) AS " + p.getProperty("t_gpxGeomCol") + " FROM "
-					+ p.getProperty("t_gpxName") + " WHERE ST_INTERSECTS(ST_GeomFromWKB(?,4326),"
-					+ p.getProperty("t_gpxGeomCol") + ");");
+
+			s = con.prepareStatement("SELECT " + p.getProperty("t_gpxrawIdCol") + "," + p.getProperty("t_trkrawIdCol") + ", ST_ASBINARY(ST_Force2D("
+					+ p.getProperty("t_gpxrawGeomCol") + ")) AS " + p.getProperty("t_gpxrawGeomCol") + " FROM "
+					+ p.getProperty("t_gpxrawName") + " WHERE ST_INTERSECTS(ST_GeomFromWKB(?,4326),"
+					+ p.getProperty("t_gpxrawGeomCol") + ");");
 
 			s.setObject(1, wkbWriter.write(buffer), java.sql.Types.BINARY);
 
 			rs = s.executeQuery();
 
 			int gpxID;
+			int trkID;
 
 			GpsTrace trace = null;
 
 			while (rs.next()) {
 				// get information from result set
-				gpxID = rs.getInt(p.getProperty("t_gpxIdCol"));
-				MultiLineString line = (MultiLineString) wkbReader.read(rs.getBytes(p.getProperty("t_gpxGeomCol")));
-				trace = new GpsTrace(gpxID, line);
+				gpxID = rs.getInt(p.getProperty("t_gpxrawIdCol"));
+				trkID = rs.getInt(p.getProperty("t_trkrawIdCol"));
+				MultiLineString line = (MultiLineString) wkbReader.read(rs.getBytes(p.getProperty("t_gpxrawGeomCol")));
+				trace = new GpsTrace(gpxID, trkID, line);
 				traces.add(trace);
 			}
 		} catch (SQLException e) {
@@ -254,10 +232,11 @@ public class MapMatcher {
 				System.exit(1);
 			}
 
-			rs = s.executeQuery("SELECT * FROM " + p.getProperty("t_gpxName") + " WHERE false");
+			rs = s.executeQuery("SELECT * FROM " + p.getProperty("t_gpxrawName") + " WHERE false");
 			try {
-				rs.findColumn(p.getProperty("t_gpxIdCol"));
-				rs.findColumn(p.getProperty("t_gpxGeomCol"));
+				rs.findColumn(p.getProperty("t_gpxrawIdCol"));
+				rs.findColumn(p.getProperty("t_trkrawIdCol"));
+				rs.findColumn(p.getProperty("t_gpxrawGeomCol"));
 			} catch (SQLException e) {
 				LOGGER.error("Coloumn is missing in gpx table.");
 				e.printStackTrace();
