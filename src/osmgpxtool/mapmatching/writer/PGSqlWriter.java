@@ -39,16 +39,16 @@ public class PGSqlWriter {
 
 			// for creation of databases
 			create = con.createStatement();
-			create.addBatch("DROP TABLE IF EXISTS " + p.getProperty("dbMatchingOutputTable") + ";");
+			create.addBatch("DROP TABLE IF EXISTS " + p.getProperty("dbOutputTable") + ";");
 			create.addBatch("CREATE TABLE "
-					+ p.getProperty("dbMatchingOutputTable")
+					+ p.getProperty("dbOutputTable")
 					+ " (\"street_id\" integer NOT NULL, \"gpx_id\" integer NOT NULL, \"trk_id\" integer NOT NULL, CONSTRAINT \""
-					+ p.getProperty("dbMatchingOutputTable") + "_PK\" PRIMARY KEY (street_id, gpx_id, trk_id));");
+					+ p.getProperty("dbOutputTable") + "_PK\" PRIMARY KEY (street_id, gpx_id, trk_id));");
 
 
 			create.executeBatch();
 
-			insert = con.prepareStatement("INSERT INTO " + p.getProperty("dbMatchingOutputTable")
+			insert = con.prepareStatement("INSERT INTO " + p.getProperty("dbOutputTable")
 					+ " (\"street_id\",\"gpx_id\", \"trk_id\") VALUES(?,?,?);");
 
 
