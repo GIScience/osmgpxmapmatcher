@@ -175,10 +175,10 @@ public class MapMatcher {
 		try {
 
 
-			s = con.prepareStatement("SELECT " + p.getProperty("t_gpxrawIdCol") + "," + p.getProperty("t_trkrawIdCol") + ", ST_ASBINARY(ST_Force2D("
-					+ p.getProperty("t_gpxrawGeomCol") + ")) AS " + p.getProperty("t_gpxrawGeomCol") + " FROM "
-					+ p.getProperty("t_gpxrawName") + " WHERE ST_INTERSECTS(ST_GeomFromWKB(?,4326),"
-					+ p.getProperty("t_gpxrawGeomCol") + ");");
+			s = con.prepareStatement("SELECT " + p.getProperty("t_gpxIdCol") + "," + p.getProperty("t_trkIdCol") + ", ST_ASBINARY(ST_Force2D("
+					+ p.getProperty("t_gpxGeomCol") + ")) AS " + p.getProperty("t_gpxGeomCol") + " FROM "
+					+ p.getProperty("t_gpxName") + " WHERE ST_INTERSECTS(ST_GeomFromWKB(?,4326),"
+					+ p.getProperty("t_gpxGeomCol") + ");");
 
 			s.setObject(1, wkbWriter.write(buffer), java.sql.Types.BINARY);
 
@@ -191,9 +191,9 @@ public class MapMatcher {
 
 			while (rs.next()) {
 				// get information from result set
-				gpxID = rs.getInt(p.getProperty("t_gpxrawIdCol"));
-				trkID = rs.getInt(p.getProperty("t_trkrawIdCol"));
-				MultiLineString line = (MultiLineString) wkbReader.read(rs.getBytes(p.getProperty("t_gpxrawGeomCol")));
+				gpxID = rs.getInt(p.getProperty("t_gpxIdCol"));
+				trkID = rs.getInt(p.getProperty("t_trkIdCol"));
+				MultiLineString line = (MultiLineString) wkbReader.read(rs.getBytes(p.getProperty("t_gpxGeomCol")));
 				trace = new GpsTrace(gpxID, trkID, line);
 				traces.add(trace);
 			}
@@ -232,11 +232,11 @@ public class MapMatcher {
 				System.exit(1);
 			}
 
-			rs = s.executeQuery("SELECT * FROM " + p.getProperty("t_gpxrawName") + " WHERE false");
+			rs = s.executeQuery("SELECT * FROM " + p.getProperty("t_gpxName") + " WHERE false");
 			try {
-				rs.findColumn(p.getProperty("t_gpxrawIdCol"));
-				rs.findColumn(p.getProperty("t_trkrawIdCol"));
-				rs.findColumn(p.getProperty("t_gpxrawGeomCol"));
+				rs.findColumn(p.getProperty("t_gpxIdCol"));
+				rs.findColumn(p.getProperty("t_trkIdCol"));
+				rs.findColumn(p.getProperty("t_gpxGeomCol"));
 			} catch (SQLException e) {
 				LOGGER.error("Coloumn is missing in gpx table.");
 				e.printStackTrace();
