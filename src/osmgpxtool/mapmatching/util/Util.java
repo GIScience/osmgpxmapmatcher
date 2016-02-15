@@ -46,11 +46,14 @@ public class Util {
 			String[] kvpairs = hstore.toString().split("\", \"");
 
 			for (String kvpair : kvpairs) {
-				String key = kvpair.split("=>")[0].replaceAll("\"", "");
-				String value = kvpair.split("=>")[1].replaceAll("\"", "");
-
-				tags.put(key, value);
-
+				try {
+					String key = kvpair.split("=>")[0].replaceAll("\"", "");
+					String value = kvpair.split("=>")[1].replaceAll("\"", "");
+					tags.put(key, value);
+				}
+				catch (Exception e) {
+					LOGGER.info("Skipped corrupt hstore entry:"+kvpair);
+				}
 			}
 			return tags;
 		}
