@@ -50,7 +50,7 @@ Example: java -jar target\osmgpxmapmatcher-0.1.jar -D osmgpx -U postgres -PW xxx
 
 When using this software for scientific purposes, please cite:
 
-John, S., Hahmann, S., Zipf, A., Bakillah, M., Mobasheri, A., Rousell, A. (2015): [Towards deriving incline values for street networks from voluntarily collected GPS data] (http://koenigstuhl.geog.uni-heidelberg.de/publications/2015/Hahmann/GI_Forum_GPS.pdf). Poster session, GI Forum. Salzburg, Austria.
+John, S., Hahmann, S., Rousell, A., Loewner, M., Zipf, A. (2016): Deriving incline values for street networks from voluntarily collected GPS traces. Cartography and Geographic Information Science (CaGIS). Taylor & Francis. http://dx.doi.org/10.1080/15230406.2016.1190300 (author manuscript: http://koenigstuhl.geog.uni-heidelberg.de/publications/2016/Hahmann/John_et_al_2016.pdf, version as accepted).
  
  
  ```
